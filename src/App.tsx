@@ -9,7 +9,8 @@ import UploadProgress from './components/Upload/UploadProgress';
 import PlantMap from './components/Map/PlantMap';
 import PlantList from './components/PlantList/PlantList';
 import Analytics from './components/Analytics/Analytics';
-import { Sparkles, MapPin, Database, BarChart3 } from 'lucide-react';
+import Settings from './components/Settings/Settings';
+import { Sparkles, MapPin, Database, BarChart3, Settings as SettingsIcon } from 'lucide-react';
 
 const App: React.FC = () => {
   useLocalStorage(); // Initialize localStorage persistence
@@ -152,6 +153,13 @@ const App: React.FC = () => {
             <div className="animate-slide-up">
               <Analytics />
             </div>
+          </div>
+        );
+      
+      case 'settings':
+        return (
+          <div className="animate-fade-in">
+            <Settings />
           </div>
         );
       

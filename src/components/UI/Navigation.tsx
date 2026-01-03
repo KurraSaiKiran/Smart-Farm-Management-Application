@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { setActiveView, toggleDarkMode } from '../../store/uiSlice';
-import { Upload, Map, List, Leaf, BarChart3, Moon, Sun } from 'lucide-react';
+import { Upload, Map, List, Leaf, BarChart3, Moon, Sun, Settings } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const dispatch = useDispatch();
@@ -14,6 +14,7 @@ const Navigation: React.FC = () => {
     { id: 'map' as const, label: 'Farm Map', icon: Map, color: 'from-blue-500 to-cyan-600' },
     { id: 'list' as const, label: `Plants (${plantCount})`, icon: List, color: 'from-purple-500 to-pink-600' },
     { id: 'analytics' as const, label: 'Analytics', icon: BarChart3, color: 'from-orange-500 to-red-600' },
+    { id: 'settings' as const, label: 'Settings', icon: Settings, color: 'from-purple-500 to-pink-600' },
   ];
 
   return (

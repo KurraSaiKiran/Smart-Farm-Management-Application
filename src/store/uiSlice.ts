@@ -9,7 +9,7 @@ interface Toast {
 interface UIState {
   isLoading: boolean;
   toasts: Toast[];
-  activeView: 'upload' | 'map' | 'list' | 'analytics';
+  activeView: 'upload' | 'map' | 'list' | 'analytics' | 'settings';
   isDarkMode: boolean;
 }
 
@@ -37,7 +37,7 @@ const uiSlice = createSlice({
     removeToast: (state, action: PayloadAction<string>) => {
       state.toasts = state.toasts.filter(toast => toast.id !== action.payload);
     },
-    setActiveView: (state, action: PayloadAction<'upload' | 'map' | 'list' | 'analytics'>) => {
+    setActiveView: (state, action: PayloadAction<'upload' | 'map' | 'list' | 'analytics' | 'settings'>) => {
       state.activeView = action.payload;
     },
     toggleDarkMode: (state) => {

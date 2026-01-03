@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import uploadReducer from './uploadSlice';
 import plantReducer from './plantSlice';
 import uiReducer from './uiSlice';
+import settingsReducer from './settingsSlice';
 
 export const store = configureStore({
   reducer: {
     upload: uploadReducer,
     plants: plantReducer,
     ui: uiReducer,
+    settings: settingsReducer,
   },
 });
 
