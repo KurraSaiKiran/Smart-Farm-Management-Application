@@ -7,6 +7,11 @@
 
 A production-ready React application that allows farmers to upload geo-tagged plant images, extract GPS coordinates, and visualize plant locations on an interactive farm map with advanced analytics and dark mode support.
 
+## 🔗 Quick Links
+
+- **🌐 Live Demo**: [https://smart-farm-management-application.vercel.app/](https://smart-farm-management-application.vercel.app/)
+- **📚 API Documentation**: [https://github.com/KurraSaiKiran/Smart-Farm-Management-Application/blob/main/API_DOCUMENTATION.md](https://github.com/KurraSaiKiran/Smart-Farm-Management-Application/blob/main/API_DOCUMENTATION.md)
+
 ## 🌟 Features
 
 ### Core Functionality
