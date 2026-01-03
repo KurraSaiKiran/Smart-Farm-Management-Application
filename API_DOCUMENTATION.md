@@ -327,15 +327,6 @@ User Image → Cloudinary → GPS Extraction → Database → Map Display
 
 This simple process turns a plant photo into a mapped location with just one drag and drop! 🌱✨
 
----
-
-## 🆘 Need Help?
-
-If you have questions about the APIs:
-1. Check the error messages in browser console
-2. Verify your environment variables are set correctly
-3. Make sure image files have GPS data (EXIF)
-4. Contact support: api-support@geotag-plants.com
 
 ---
 
