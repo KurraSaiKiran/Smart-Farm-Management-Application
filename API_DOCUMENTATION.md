@@ -1,1 +1,342 @@
-# GeoTag Plants - API Documentation\n\n## Overview\n\nThis document provides comprehensive API documentation for the GeoTag Plants application, including external API integrations, data models, and implementation details.\n\n## Table of Contents\n\n1. [External APIs](#external-apis)\n2. [Data Models](#data-models)\n3. [Authentication](#authentication)\n4. [Error Handling](#error-handling)\n5. [Rate Limiting](#rate-limiting)\n6. [Examples](#examples)\n\n---\n\n## External APIs\n\n### 1. Location Extraction API\n\nExtracts GPS coordinates from uploaded plant images using EXIF data.\n\n#### Endpoint\n```\nPOST https://api.alumnx.com/api/hackathons/extract-latitude-longitude\n```\n\n#### Headers\n```\nContent-Type: application/json\n```\n\n#### Request Body\n```json\n{\n  \"emailId\": \"farmer@gmail.com\",\n  \"imageName\": \"plant_image.jpg\",\n  \"imageUrl\": \"https://res.cloudinary.com/dcq7to98l/image/upload/v123456/sample.jpg\"\n}\n```\n\n#### Response\n```json\n{\n  \"success\": true,\n  \"data\": {\n    \"imageName\": \"plant_image.jpg\",\n    \"latitude\": 15.96963,\n    \"longitude\": 79.27812\n  }\n}\n```\n\n#### Error Response\n```json\n{\n  \"success\": false,\n  \"error\": \"Unable to extract location data from image\",\n  \"message\": \"No GPS data found in image EXIF\"\n}\n```\n\n---\n\n### 2. Plant Data Storage API\n\nSaves plant location data to the database with unique farmer identification.\n\n#### Endpoint\n```\nPOST https://api.alumnx.com/api/hackathons/save-plant-location-data\n```\n\n#### Headers\n```\nContent-Type: application/json\n```\n\n#### Request Body\n```json\n{\n  \"emailId\": \"farmer@gmail.com\",\n  \"imageName\": \"1_latitude_15.96963_longitude_79.27812.jpeg\",\n  \"imageUrl\": \"https://res.cloudinary.com/dcq7to98l/image/upload/v456/updated.jpg\",\n  \"latitude\": 15.97048,\n  \"longitude\": 79.27811\n}\n```\n\n#### Success Response\n```json\n{\n  \"success\": true,\n  \"message\": \"Farmer plant location data updated successfully\",\n  \"isUpdate\": true,\n  \"data\": {\n    \"id\": \"6789abcd1234ef5678901234\",\n    \"emailId\": \"farmer@gmail.com\",\n    \"imageName\": \"1_latitude_15.96963_longitude_79.27812.jpeg\",\n    \"imageUrl\": \"https://res.cloudinary.com/dcq7to98l/image/upload/v456/updated.jpg\",\n    \"latitude\": 15.97048,\n    \"longitude\": 79.27811,\n    \"uploadedAt\": \"2024-01-03T11:45:30.456Z\",\n    \"location\": {\n      \"type\": \"Point\",\n      \"coordinates\": [79.27811, 15.97048]\n    },\n    \"createdAt\": \"2024-01-03T10:30:45.123Z\",\n    \"updatedAt\": \"2024-01-03T11:45:30.456Z\"\n  }\n}\n```\n\n#### Error Response\n```json\n{\n  \"success\": false,\n  \"error\": \"Validation failed\",\n  \"message\": \"Invalid coordinates provided\"\n}\n```\n\n---\n\n### 3. Cloudinary Image Upload API\n\nHandles secure image uploads with unsigned upload preset.\n\n#### Endpoint\n```\nPOST https://api.cloudinary.com/v1_1/{cloud_name}/image/upload\n```\n\n#### Headers\n```\nContent-Type: multipart/form-data\n```\n\n#### Request Body (Form Data)\n```\nfile: [Binary image file]\nupload_preset: unsigned_upload\n```\n\n#### Response\n```json\n{\n  \"public_id\": \"sample_id\",\n  \"version\": 1234567890,\n  \"signature\": \"abc123def456\",\n  \"width\": 1920,\n  \"height\": 1080,\n  \"format\": \"jpg\",\n  \"resource_type\": \"image\",\n  \"created_at\": \"2024-01-03T10:30:45Z\",\n  \"bytes\": 245760,\n  \"type\": \"upload\",\n  \"url\": \"http://res.cloudinary.com/dcq7to98l/image/upload/v1234567890/sample_id.jpg\",\n  \"secure_url\": \"https://res.cloudinary.com/dcq7to98l/image/upload/v1234567890/sample_id.jpg\",\n  \"original_filename\": \"plant_image\"\n}\n```\n\n---\n\n## Data Models\n\n### Plant Model\n\n```typescript\ninterface Plant {\n  id: string;                    // Unique identifier\n  imageName: string;             // Original image filename\n  imageUrl: string;              // Cloudinary secure URL\n  latitude: number;              // GPS latitude (-90 to 90)\n  longitude: number;             // GPS longitude (-180 to 180)\n  uploadedAt: string;            // ISO 8601 timestamp\n}\n```\n\n### Upload Progress Model\n\n```typescript\ninterface UploadProgress {\n  id: string;                    // Unique upload identifier\n  progress: number;              // Upload progress (0-100)\n  status: 'uploading' | 'extracting' | 'saving' | 'completed' | 'error';\n  error?: string;                // Error message if failed\n}\n```\n\n### Location Response Model\n\n```typescript\ninterface LocationResponse {\n  success: boolean;\n  data: {\n    imageName: string;\n    latitude: number;\n    longitude: number;\n  };\n}\n```\n\n### Cloudinary Response Model\n\n```typescript\ninterface CloudinaryResponse {\n  public_id: string;\n  secure_url: string;\n  original_filename: string;\n  width: number;\n  height: number;\n  format: string;\n  bytes: number;\n}\n```\n\n---\n\n## Authentication\n\n### Email-based Identification\n\nThe application uses email addresses as unique identifiers for farmers. No traditional authentication is required, but each API call must include the farmer's email ID.\n\n```json\n{\n  \"emailId\": \"farmer@gmail.com\"\n}\n```\n\n### Cloudinary Security\n\n- **Unsigned Uploads**: Uses upload presets for secure, client-side uploads\n- **No API Secrets**: API secrets are never exposed in frontend code\n- **Preset Configuration**: Upload restrictions managed via Cloudinary dashboard\n\n---\n\n## Error Handling\n\n### HTTP Status Codes\n\n| Code | Description | Action |\n|------|-------------|--------|\n| 200 | Success | Process response data |\n| 400 | Bad Request | Validate input parameters |\n| 401 | Unauthorized | Check authentication |\n| 403 | Forbidden | Verify permissions |\n| 404 | Not Found | Check endpoint URL |\n| 429 | Rate Limited | Implement retry logic |\n| 500 | Server Error | Show user-friendly message |\n\n### Error Response Format\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error type\",\n  \"message\": \"Human-readable error description\",\n  \"code\": \"ERROR_CODE\",\n  \"timestamp\": \"2024-01-03T10:30:45.123Z\"\n}\n```\n\n### Client-Side Error Handling\n\n```typescript\ntry {\n  const response = await api.call();\n  return response.data;\n} catch (error) {\n  if (error.response?.status === 429) {\n    // Rate limited - retry after delay\n    await delay(1000);\n    return retry();\n  }\n  \n  // Log error and show user-friendly message\n  console.error('API Error:', error);\n  showToast('Operation failed. Please try again.');\n  \n  // Return fallback data if available\n  return getFallbackData();\n}\n```\n\n---\n\n## Rate Limiting\n\n### Current Limits\n\n- **Location Extraction**: 100 requests per hour per email\n- **Plant Data Storage**: 200 requests per hour per email\n- **Cloudinary Uploads**: Based on account plan\n\n### Rate Limit Headers\n\n```\nX-RateLimit-Limit: 100\nX-RateLimit-Remaining: 95\nX-RateLimit-Reset: 1609459200\n```\n\n### Handling Rate Limits\n\n```typescript\nconst handleRateLimit = async (retryAfter: number) => {\n  await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));\n  return retryRequest();\n};\n```\n\n---\n\n## Examples\n\n### Complete Upload Workflow\n\n```typescript\n// 1. Upload image to Cloudinary\nconst uploadImage = async (file: File) => {\n  const formData = new FormData();\n  formData.append('file', file);\n  formData.append('upload_preset', 'unsigned_upload');\n  \n  const response = await fetch(\n    'https://api.cloudinary.com/v1_1/dcq7to98l/image/upload',\n    {\n      method: 'POST',\n      body: formData\n    }\n  );\n  \n  return response.json();\n};\n\n// 2. Extract location from image\nconst extractLocation = async (imageUrl: string, imageName: string) => {\n  const response = await fetch(\n    'https://api.alumnx.com/api/hackathons/extract-latitude-longitude',\n    {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({\n        emailId: 'farmer@gmail.com',\n        imageName,\n        imageUrl\n      })\n    }\n  );\n  \n  return response.json();\n};\n\n// 3. Save plant data\nconst savePlantData = async (plantData: any) => {\n  const response = await fetch(\n    'https://api.alumnx.com/api/hackathons/save-plant-location-data',\n    {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify(plantData)\n    }\n  );\n  \n  return response.json();\n};\n\n// Complete workflow\nconst uploadPlant = async (file: File) => {\n  try {\n    // Step 1: Upload image\n    const cloudinaryResponse = await uploadImage(file);\n    \n    // Step 2: Extract location\n    const locationResponse = await extractLocation(\n      cloudinaryResponse.secure_url,\n      cloudinaryResponse.original_filename\n    );\n    \n    // Step 3: Save plant data\n    const plantData = {\n      emailId: 'farmer@gmail.com',\n      imageName: locationResponse.data.imageName,\n      imageUrl: cloudinaryResponse.secure_url,\n      latitude: locationResponse.data.latitude,\n      longitude: locationResponse.data.longitude\n    };\n    \n    const saveResponse = await savePlantData(plantData);\n    \n    return saveResponse;\n  } catch (error) {\n    console.error('Upload failed:', error);\n    throw error;\n  }\n};\n```\n\n### Error Handling Example\n\n```typescript\nconst robustApiCall = async (apiFunction: Function, maxRetries = 3) => {\n  for (let attempt = 1; attempt <= maxRetries; attempt++) {\n    try {\n      return await apiFunction();\n    } catch (error) {\n      if (attempt === maxRetries) {\n        // Final attempt failed\n        throw new Error(`API call failed after ${maxRetries} attempts`);\n      }\n      \n      // Wait before retry (exponential backoff)\n      const delay = Math.pow(2, attempt) * 1000;\n      await new Promise(resolve => setTimeout(resolve, delay));\n    }\n  }\n};\n```\n\n### Batch Operations\n\n```typescript\nconst uploadMultiplePlants = async (files: File[]) => {\n  const results = [];\n  \n  for (const file of files) {\n    try {\n      const result = await uploadPlant(file);\n      results.push({ success: true, data: result });\n    } catch (error) {\n      results.push({ success: false, error: error.message });\n    }\n    \n    // Rate limiting: wait between uploads\n    await new Promise(resolve => setTimeout(resolve, 1000));\n  }\n  \n  return results;\n};\n```\n\n---\n\n## Environment Configuration\n\n### Required Environment Variables\n\n```bash\n# Cloudinary Configuration\nVITE_CLOUDINARY_CLOUD_NAME=dcq7to98l\nVITE_CLOUDINARY_UPLOAD_PRESET=unsigned_upload\n\n# API Configuration (Optional)\nVITE_API_BASE_URL=https://api.alumnx.com/api/hackathons\nVITE_USER_EMAIL=farmer@gmail.com\n```\n\n### Security Best Practices\n\n1. **Never expose API secrets** in frontend code\n2. **Use unsigned uploads** for client-side image uploads\n3. **Validate all inputs** before API calls\n4. **Implement rate limiting** on client side\n5. **Use HTTPS** for all API communications\n6. **Sanitize user inputs** to prevent injection attacks\n\n---\n\n## Testing\n\n### API Testing with curl\n\n```bash\n# Test location extraction\ncurl -X POST https://api.alumnx.com/api/hackathons/extract-latitude-longitude \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"emailId\": \"farmer@gmail.com\",\n    \"imageName\": \"test.jpg\",\n    \"imageUrl\": \"https://example.com/image.jpg\"\n  }'\n\n# Test plant data storage\ncurl -X POST https://api.alumnx.com/api/hackathons/save-plant-location-data \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"emailId\": \"farmer@gmail.com\",\n    \"imageName\": \"test.jpg\",\n    \"imageUrl\": \"https://example.com/image.jpg\",\n    \"latitude\": 15.96963,\n    \"longitude\": 79.27812\n  }'\n```\n\n### Integration Testing\n\n```typescript\ndescribe('Plant Upload API', () => {\n  test('should upload and save plant successfully', async () => {\n    const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });\n    const result = await uploadPlant(mockFile);\n    \n    expect(result.success).toBe(true);\n    expect(result.data.latitude).toBeDefined();\n    expect(result.data.longitude).toBeDefined();\n  });\n  \n  test('should handle API errors gracefully', async () => {\n    const invalidFile = new File(['test'], 'test.txt', { type: 'text/plain' });\n    \n    await expect(uploadPlant(invalidFile)).rejects.toThrow();\n  });\n});\n```\n\n---\n\n## Changelog\n\n### Version 1.0.0 (2024-01-15)\n- Initial API documentation\n- Location extraction API integration\n- Plant data storage API integration\n- Cloudinary upload API integration\n- Comprehensive error handling\n- Rate limiting implementation\n\n---\n\n## Support\n\nFor API-related questions or issues:\n\n- **Documentation**: This file\n- **Issues**: Create GitHub issue with API logs\n- **Email**: api-support@geotag-plants.com\n\n---\n\n*This documentation is maintained alongside the GeoTag Plants application and updated with each release.*"
+# API Documentation - Smart Farm Management Application
+
+## 📋 Overview
+
+This document explains the APIs used in the Smart Farm Management Application. The app uses 3 main APIs to handle plant image uploads and location data.
+
+## 🔄 How the App Works
+
+**Simple 3-Step Process:**
+1. **Upload Image** → Cloudinary stores the image
+2. **Extract Location** → API gets GPS coordinates from image
+3. **Save Plant Data** → API saves plant info to database
+
+---
+
+## 🌐 API Endpoints
+
+### 1. 📤 Image Upload API (Cloudinary)
+
+**What it does:** Uploads plant images to cloud storage
+
+**Endpoint:**
+```
+POST https://api.cloudinary.com/v1_1/dcq7to98l/image/upload
+```
+
+**How to use:**
+```javascript
+// Upload a plant image
+const formData = new FormData();
+formData.append('file', imageFile);
+formData.append('upload_preset', 'unsigned_upload');
+
+fetch('https://api.cloudinary.com/v1_1/dcq7to98l/image/upload', {
+  method: 'POST',
+  body: formData
+})
+```
+
+**What you get back:**
+```json
+{
+  "secure_url": "https://res.cloudinary.com/dcq7to98l/image/upload/v123/plant.jpg",
+  "original_filename": "my_plant_photo",
+  "width": 1920,
+  "height": 1080
+}
+```
+
+---
+
+### 2. 📍 Location Extraction API
+
+**What it does:** Gets GPS coordinates from uploaded plant images
+
+**Endpoint:**
+```
+POST https://api.alumnx.com/api/hackathons/extract-latitude-longitude
+```
+
+**What to send:**
+```json
+{
+  "emailId": "farmer@gmail.com",
+  "imageName": "plant_photo.jpg",
+  "imageUrl": "https://res.cloudinary.com/dcq7to98l/image/upload/v123/plant.jpg"
+}
+```
+
+**What you get back:**
+```json
+{
+  "success": true,
+  "data": {
+    "imageName": "plant_photo.jpg",
+    "latitude": 15.96963,
+    "longitude": 79.27812
+  }
+}
+```
+
+**Example Usage:**
+```javascript
+const response = await fetch('https://api.alumnx.com/api/hackathons/extract-latitude-longitude', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    emailId: 'farmer@gmail.com',
+    imageName: 'plant_photo.jpg',
+    imageUrl: 'https://res.cloudinary.com/dcq7to98l/image/upload/v123/plant.jpg'
+  })
+});
+
+const result = await response.json();
+console.log('GPS Location:', result.data.latitude, result.data.longitude);
+```
+
+---
+
+### 3. 💾 Save Plant Data API
+
+**What it does:** Saves plant information to the database
+
+**Endpoint:**
+```
+POST https://api.alumnx.com/api/hackathons/save-plant-location-data
+```
+
+**What to send:**
+```json
+{
+  "emailId": "farmer@gmail.com",
+  "imageName": "plant_photo.jpg",
+  "imageUrl": "https://res.cloudinary.com/dcq7to98l/image/upload/v123/plant.jpg",
+  "latitude": 15.96963,
+  "longitude": 79.27812
+}
+```
+
+**What you get back:**
+```json
+{
+  "success": true,
+  "message": "Plant data saved successfully",
+  "data": {
+    "id": "unique_plant_id_123",
+    "emailId": "farmer@gmail.com",
+    "imageName": "plant_photo.jpg",
+    "imageUrl": "https://res.cloudinary.com/dcq7to98l/image/upload/v123/plant.jpg",
+    "latitude": 15.96963,
+    "longitude": 79.27812,
+    "uploadedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+**Example Usage:**
+```javascript
+const response = await fetch('https://api.alumnx.com/api/hackathons/save-plant-location-data', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    emailId: 'farmer@gmail.com',
+    imageName: 'plant_photo.jpg',
+    imageUrl: 'https://res.cloudinary.com/dcq7to98l/image/upload/v123/plant.jpg',
+    latitude: 15.96963,
+    longitude: 79.27812
+  })
+});
+
+const result = await response.json();
+console.log('Plant saved with ID:', result.data.id);
+```
+
+---
+
+## 🔗 Complete Workflow Example
+
+**Here's how all 3 APIs work together:**
+
+```javascript
+// Step 1: Upload image to Cloudinary
+async function uploadPlantImage(imageFile) {
+  const formData = new FormData();
+  formData.append('file', imageFile);
+  formData.append('upload_preset', 'unsigned_upload');
+  
+  const uploadResponse = await fetch(
+    'https://api.cloudinary.com/v1_1/dcq7to98l/image/upload',
+    { method: 'POST', body: formData }
+  );
+  
+  const uploadResult = await uploadResponse.json();
+  console.log('✅ Image uploaded:', uploadResult.secure_url);
+  
+  // Step 2: Extract GPS location
+  const locationResponse = await fetch(
+    'https://api.alumnx.com/api/hackathons/extract-latitude-longitude',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        emailId: 'farmer@gmail.com',
+        imageName: uploadResult.original_filename,
+        imageUrl: uploadResult.secure_url
+      })
+    }
+  );
+  
+  const locationResult = await locationResponse.json();
+  console.log('✅ Location extracted:', locationResult.data.latitude, locationResult.data.longitude);
+  
+  // Step 3: Save plant data
+  const saveResponse = await fetch(
+    'https://api.alumnx.com/api/hackathons/save-plant-location-data',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        emailId: 'farmer@gmail.com',
+        imageName: locationResult.data.imageName,
+        imageUrl: uploadResult.secure_url,
+        latitude: locationResult.data.latitude,
+        longitude: locationResult.data.longitude
+      })
+    }
+  );
+  
+  const saveResult = await saveResponse.json();
+  console.log('✅ Plant saved with ID:', saveResult.data.id);
+  
+  return saveResult;
+}
+
+// Usage
+const fileInput = document.getElementById('plant-image');
+const imageFile = fileInput.files[0];
+uploadPlantImage(imageFile);
+```
+
+---
+
+## ⚠️ Error Handling
+
+**What happens when things go wrong:**
+
+### Common Errors:
+
+**1. Image Upload Fails:**
+```json
+{
+  "error": {
+    "message": "Invalid file format"
+  }
+}
+```
+
+**2. Location Extraction Fails:**
+```json
+{
+  "success": false,
+  "error": "No GPS data found in image"
+}
+```
+
+**3. Save Plant Data Fails:**
+```json
+{
+  "success": false,
+  "error": "Invalid coordinates"
+}
+```
+
+### How to Handle Errors:
+```javascript
+try {
+  const result = await uploadPlantImage(imageFile);
+  console.log('Success!', result);
+} catch (error) {
+  console.error('Something went wrong:', error.message);
+  // Show user-friendly error message
+  alert('Failed to upload plant. Please try again.');
+}
+```
+
+---
+
+## 🔧 Configuration
+
+**Environment Variables Needed:**
+```bash
+# In your .env file
+VITE_CLOUDINARY_CLOUD_NAME=dcq7to98l
+VITE_CLOUDINARY_UPLOAD_PRESET=unsigned_upload
+```
+
+**Important Notes:**
+- ✅ **Email ID**: Use `farmer@gmail.com` as your unique identifier
+- ✅ **File Types**: Only JPG and PNG images are supported
+- ✅ **File Size**: Maximum 10MB per image
+- ✅ **Rate Limits**: 100 requests per hour per email
+
+---
+
+## 🧪 Testing the APIs
+
+**Test with curl commands:**
+
+```bash
+# Test location extraction
+curl -X POST https://api.alumnx.com/api/hackathons/extract-latitude-longitude \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailId": "farmer@gmail.com",
+    "imageName": "test.jpg",
+    "imageUrl": "https://example.com/test.jpg"
+  }'
+
+# Test save plant data
+curl -X POST https://api.alumnx.com/api/hackathons/save-plant-location-data \
+  -H "Content-Type: application/json" \
+  -d '{
+    "emailId": "farmer@gmail.com",
+    "imageName": "test.jpg",
+    "imageUrl": "https://example.com/test.jpg",
+    "latitude": 15.96963,
+    "longitude": 79.27812
+  }'
+```
+
+---
+
+## 📱 How It Works in the App
+
+**User Journey:**
+1. 👤 **User** drags and drops a plant image
+2. 📤 **App** uploads image to Cloudinary
+3. 📍 **App** extracts GPS coordinates from image
+4. 💾 **App** saves plant data to database
+5. 🗺️ **App** shows plant location on map
+6. 📊 **App** updates analytics dashboard
+
+**Data Flow:**
+```
+User Image → Cloudinary → GPS Extraction → Database → Map Display
+```
+
+This simple process turns a plant photo into a mapped location with just one drag and drop! 🌱✨
+
+---
+
+## 🆘 Need Help?
+
+If you have questions about the APIs:
+1. Check the error messages in browser console
+2. Verify your environment variables are set correctly
+3. Make sure image files have GPS data (EXIF)
+4. Contact support: api-support@geotag-plants.com
+
+---
+
+*This documentation covers all APIs used in the Smart Farm Management Application. Each API is simple to use and well-documented with examples.*
