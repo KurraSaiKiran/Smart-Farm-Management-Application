@@ -334,27 +334,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## 🙏 Acknowledgments
-
-- **React Team**: For the amazing framework
-- **Redux Team**: For predictable state management
-- **Tailwind CSS**: For utility-first styling
-- **Leaflet**: For interactive maps
-- **Cloudinary**: For image management
-
-## 📞 Support
-
-For questions and support:
-- 📧 Email: support@geotag-plants.com
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/geotag-plants/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/your-username/geotag-plants/discussions)
-
 ---
-
-**Built with ❤️ for farmers worldwide** 🌱coverage
-- [ ] **Performance Monitoring**: Real user metrics tracking
-- [ ] **Internationalization**: Multi-language support
-- [ ] **Advanced Analytics**: More detailed insights and reports
 
 ## 🤝 Contributing
 
@@ -372,7 +352,7 @@ For questions and support:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
@@ -381,13 +361,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Tailwind CSS**: For utility-first styling
 - **Leaflet**: For interactive maps
 - **Cloudinary**: For image management
-
-## 📞 Support
-
-For questions and support:
-- 📧 Email: support@geotag-plants.com
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/geotag-plants/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/your-username/geotag-plants/discussions)
 
 ---
 
