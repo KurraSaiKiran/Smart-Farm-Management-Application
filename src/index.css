@@ -157,6 +157,42 @@
   animation: sway 3s ease-in-out infinite;
 }
 
+/* Cursor follower animations */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+  }
+}
+
+@keyframes drift {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px);
+  }
+  25% {
+    transform: translateX(2px) translateY(-1px);
+  }
+  75% {
+    transform: translateX(-1px) translateY(2px);
+  }
+}
+
+.cursor-follower {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(52, 211, 153, 0.2) 50%, rgba(16, 185, 129, 0.1) 100%);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  transition: opacity 0.3s ease;
+  animation: breathe 4s ease-in-out infinite, drift 6s ease-in-out infinite;
+  backdrop-filter: blur(1px);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
 /* Staggered delays */
 .delay-100 { animation-delay: 0.1s; }
 .delay-200 { animation-delay: 0.2s; }

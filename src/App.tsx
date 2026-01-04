@@ -10,6 +10,7 @@ import PlantMap from './components/Map/PlantMap';
 import PlantList from './components/PlantList/PlantList';
 import Analytics from './components/Analytics/Analytics';
 import Settings from './components/Settings/Settings';
+import CursorFollower from './components/UI/CursorFollower';
 import { Sparkles, MapPin, Database, BarChart3, Settings as SettingsIcon } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -196,6 +197,7 @@ const App: React.FC = () => {
         {renderContent()}
       </main>
       <Toast />
+      <CursorFollower />
       
       {/* Dynamic background elements based on view */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
