@@ -52,8 +52,26 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen p-6 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
-      <div className="max-w-4xl mx-auto">
+    <div className={`min-h-screen p-6 relative ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-br from-green-50 to-blue-50'}`}>
+      {/* Attractive Transparent Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/8 via-purple-400/6 to-fuchsia-500/8 rounded-3xl backdrop-blur-sm"></div>
+      
+      {/* Enhanced Background Pattern */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a855f7' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M50 50c13.807 0 25-11.193 25-25S63.807 0 50 0 25 11.193 25 25s11.193 25 25 25zm0 25c13.807 0 25-11.193 25-25S63.807 50 50 50 25 61.193 25 75s11.193 25 25 25z'/%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+      </div>
+      
+      {/* Enhanced Floating Decorative Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className={`absolute top-20 left-20 w-32 h-32 rounded-full opacity-10 animate-gentle-bounce ${isDarkMode ? 'bg-gradient-to-r from-purple-400 to-pink-400' : 'bg-gradient-to-r from-purple-300 to-pink-300'}`}></div>
+        <div className={`absolute top-40 right-40 w-24 h-24 rounded-full opacity-10 animate-gentle-bounce delay-100 ${isDarkMode ? 'bg-gradient-to-r from-blue-400 to-cyan-400' : 'bg-gradient-to-r from-blue-300 to-cyan-300'}`}></div>
+        <div className={`absolute bottom-40 left-40 w-20 h-20 rounded-full opacity-10 animate-gentle-bounce delay-200 ${isDarkMode ? 'bg-gradient-to-r from-green-400 to-emerald-400' : 'bg-gradient-to-r from-green-300 to-emerald-300'}`}></div>
+        <div className={`absolute bottom-20 right-20 w-28 h-28 rounded-full opacity-10 animate-gentle-bounce delay-300 ${isDarkMode ? 'bg-gradient-to-r from-orange-400 to-red-400' : 'bg-gradient-to-r from-orange-300 to-red-300'}`}></div>
+      </div>
+      
+      <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex items-center space-x-3 mb-8">
           <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl">
             <SettingsIcon className="w-8 h-8 text-white" />

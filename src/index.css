@@ -2,54 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Poppins', system-ui, sans-serif;
   }
   
   body {
-    @apply antialiased bg-gradient-to-br from-green-50 via-blue-50 to-purple-50;
+    @apply antialiased bg-gradient-to-br from-slate-50 via-white to-green-50;
   }
   
   .dark body {
-    @apply bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900;
+    @apply bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-green-500 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-green-600 hover:to-blue-700 focus:ring-4 focus:ring-green-200 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 focus:ring-4 focus:ring-green-200 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 font-medium;
   }
   
   .btn-secondary {
-    @apply bg-white text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 transition-all duration-300 shadow-md hover:shadow-lg border border-gray-200;
+    @apply bg-white text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 transition-all duration-300 shadow-md hover:shadow-lg border border-gray-200 font-medium;
   }
   
   .dark .btn-secondary {
-    @apply bg-gray-700 text-gray-200 hover:bg-gray-600 border-gray-600;
+    @apply bg-gray-800 text-gray-200 hover:bg-gray-700 border-gray-700;
   }
 
   .card {
-    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20;
+    @apply bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 transform hover:-translate-y-1;
   }
   
   .dark .card {
-    @apply bg-gray-800/80 border-gray-700/20;
+    @apply bg-gray-800 border-gray-700 shadow-gray-900/20;
   }
 
   .glass-effect {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
   }
   
   .dark .glass-effect {
-    @apply bg-gray-900/10 border-gray-700/20;
+    @apply bg-gray-900/80 border-gray-700/20;
+  }
+
+  .modern-gradient {
+    @apply bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent;
+  }
+
+  .feature-card {
+    @apply relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-105;
+  }
+
+  .feature-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br opacity-10 transition-opacity duration-300;
+  }
+
+  .feature-card:hover::before {
+    @apply opacity-20;
+  }
+
+  .nav-button {
+    @apply relative px-4 py-2 rounded-xl transition-all duration-300 font-medium;
+  }
+
+  .nav-button.active {
+    @apply bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg;
+  }
+
+  .nav-button:not(.active) {
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+  }
+
+  .dark .nav-button:not(.active) {
+    @apply text-gray-300 hover:text-white hover:bg-gray-700;
   }
 }
 
-/* Custom Animations */
-@keyframes fade-in {
+/* Clean animations */
+@keyframes fade-up {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -60,87 +93,96 @@
   }
 }
 
-@keyframes slide-up {
+@keyframes slide-in {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateX(-20px);
   }
   to {
     opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes gentle-bounce {
+  0%, 100% {
     transform: translateY(0);
   }
-}
-
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.2;
-  }
   50% {
-    opacity: 0.4;
+    transform: translateY(-5px);
   }
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(0deg);
   }
-  50% {
-    transform: translateY(-10px);
+  33% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(-5px) rotate(-1deg);
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out;
+@keyframes sway {
+  0%, 100% {
+    transform: translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(5px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-5px) rotate(-1deg);
+  }
 }
 
-.animate-slide-up {
-  animation: slide-up 0.8s ease-out;
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out;
 }
 
-.animate-scale-in {
-  animation: scale-in 0.5s ease-out;
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out;
 }
 
-.animate-pulse-slow {
-  animation: pulse-slow 3s ease-in-out infinite;
+.animate-gentle-bounce {
+  animation: gentle-bounce 2s ease-in-out infinite;
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
-/* Staggered animations */
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
+.animate-sway {
+  animation: sway 3s ease-in-out infinite;
+}
 
-/* Leaflet map styles */
+/* Staggered delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+
+/* Mobile improvements */
+@media (max-width: 1024px) {
+  .card {
+    @apply mx-2;
+  }
+  
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Leaflet styling */
 .leaflet-container {
-  font-family: inherit;
   border-radius: 1rem;
-  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .leaflet-popup-content-wrapper {
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-.leaflet-popup-content {
-  margin: 0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
 /* Custom scrollbar */
@@ -158,44 +200,17 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #10b981, #3b82f6);
+  background: linear-gradient(to bottom, #16a34a, #059669);
   border-radius: 3px;
-  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #059669, #2563eb);
+  background: linear-gradient(to bottom, #15803d, #047857);
 }
 
-/* Mobile-specific improvements */
-@media (max-width: 1024px) {
-  .card {
-    @apply mx-2;
-  }
-  
-  .glass-effect {
-    @apply backdrop-blur-sm;
-  }
-  
-  /* Ensure touch targets are large enough */
-  button {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  /* Better spacing for mobile */
-  .space-y-8 > * + * {
-    margin-top: 1.5rem;
-  }
-  
-  .space-y-4 > * + * {
-    margin-top: 1rem;
-  }
-}
-
-/* Smooth transitions for all interactive elements */
+/* Smooth transitions */
 * {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 200ms;
 }

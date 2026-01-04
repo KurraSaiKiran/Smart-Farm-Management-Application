@@ -49,30 +49,59 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const getViewBackground = () => {
+    switch (currentView) {
+      case 'upload':
+        return isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-emerald-900/20 to-green-900/30'
+          : 'bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50';
+      case 'map':
+        return isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-blue-900/20 to-cyan-900/30'
+          : 'bg-gradient-to-br from-blue-50 via-cyan-50 to-indigo-50';
+      case 'list':
+        return isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-rose-900/20 to-pink-900/30'
+          : 'bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50';
+      case 'analytics':
+        return isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-purple-900/20 to-indigo-900/30'
+          : 'bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50';
+      case 'settings':
+        return isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-violet-900/20 to-purple-900/30'
+          : 'bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50';
+      default:
+        return isDarkMode ? 'bg-gray-900' : 'bg-gray-50';
+    }
+  };
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('SW registered'))
+        .catch(() => console.log('SW registration failed'));
+    }
+  }, []);
+
   const renderContent = () => {
     switch (currentView) {
       case 'upload':
         return (
           <div className="space-y-8">
-            <div className="text-center space-y-4 animate-fade-in">
-              <div className="flex items-center justify-center space-x-3">
-                <Sparkles className="w-8 h-8 text-green-500 animate-bounce" />
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  Upload Plant Images
-                </h2>
-                <Sparkles className="w-8 h-8 text-blue-500 animate-bounce" style={{animationDelay: '0.5s'}} />
-              </div>
-              <p className={`text-xl max-w-2xl mx-auto leading-relaxed transition-colors duration-300 ${
+            <div className="text-center space-y-4 animate-fade-up">
+              <h2 className="text-4xl font-bold modern-gradient">
+                Upload Plant Images
+              </h2>
+              <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${
                 isDarkMode ? 'text-gray-300' : 'text-gray-600'
               }`}>
-                Transform your geo-tagged photos into an interactive farm map. 
-                <span className="font-semibold text-green-600">AI-powered location extraction</span> makes it effortless!
+                Transform your geo-tagged photos into an interactive farm map with AI-powered location extraction.
               </p>
             </div>
-            <div className="animate-slide-up">
+            <div className="animate-fade-up delay-100">
               <ImageUpload />
             </div>
-            <div className="animate-slide-up" style={{animationDelay: '0.2s'}}>
+            <div className="animate-fade-up delay-200">
               <UploadProgress />
             </div>
           </div>
@@ -81,30 +110,26 @@ const App: React.FC = () => {
       case 'map':
         return (
           <div className="space-y-8">
-            <div className="text-center space-y-4 animate-fade-in">
-              <div className="flex items-center justify-center space-x-3">
-                <MapPin className="w-8 h-8 text-blue-500 animate-pulse" />
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Interactive Farm Map
-                </h2>
-                <MapPin className="w-8 h-8 text-purple-500 animate-pulse" style={{animationDelay: '0.5s'}} />
-              </div>
-              <p className={`text-xl max-w-2xl mx-auto leading-relaxed transition-colors duration-300 ${
+            <div className="text-center space-y-4 animate-fade-up">
+              <h2 className="text-4xl font-bold modern-gradient">
+                Interactive Farm Map
+              </h2>
+              <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${
                 isDarkMode ? 'text-gray-300' : 'text-gray-600'
               }`}>
                 Explore your farm like never before. Each pin tells a story of growth and location.
               </p>
             </div>
             {plantCount > 0 ? (
-              <div className={`card p-2 animate-scale-in ${isDarkMode ? 'bg-gray-800' : ''}`}>
+              <div className={`card p-4 animate-fade-up delay-100 ${isDarkMode ? 'bg-gray-800' : ''}`}>
                 <PlantMap />
               </div>
             ) : (
-              <div className={`card p-12 text-center animate-scale-in ${isDarkMode ? 'bg-gray-800 text-white' : ''}`}>
-                <MapPin className={`w-16 h-16 mx-auto mb-4 animate-bounce ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
+              <div className={`card p-12 text-center animate-fade-up delay-100 ${isDarkMode ? 'bg-gray-800 text-white' : ''}`}>
+                <MapPin className={`w-16 h-16 mx-auto mb-4 animate-gentle-bounce ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
                 <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>Your Farm Map Awaits</h3>
                 <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Upload some plant images to see them come alive on the map!</p>
-                <button className="btn-primary transform hover:scale-105 transition-transform duration-200">Start Uploading</button>
+                <button className="btn-primary">Start Uploading</button>
               </div>
             )}
           </div>
@@ -113,21 +138,17 @@ const App: React.FC = () => {
       case 'list':
         return (
           <div className="space-y-8">
-            <div className="text-center space-y-4 animate-fade-in">
-              <div className="flex items-center justify-center space-x-3">
-                <Database className="w-8 h-8 text-purple-500 animate-pulse" />
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Plant Collection
-                </h2>
-                <Database className="w-8 h-8 text-pink-500 animate-pulse" style={{animationDelay: '0.5s'}} />
-              </div>
-              <p className={`text-xl max-w-2xl mx-auto leading-relaxed transition-colors duration-300 ${
+            <div className="text-center space-y-4 animate-fade-up">
+              <h2 className="text-4xl font-bold modern-gradient">
+                Plant Collection
+              </h2>
+              <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${
                 isDarkMode ? 'text-gray-300' : 'text-gray-600'
               }`}>
                 Manage your digital garden with powerful search, sorting, and export capabilities.
               </p>
             </div>
-            <div className="animate-slide-up">
+            <div className="animate-fade-up delay-100">
               <PlantList />
             </div>
           </div>
@@ -136,21 +157,17 @@ const App: React.FC = () => {
       case 'analytics':
         return (
           <div className="space-y-8">
-            <div className="text-center space-y-4 animate-fade-in">
-              <div className="flex items-center justify-center space-x-3">
-                <BarChart3 className="w-8 h-8 text-orange-500 animate-pulse" />
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                  Farm Analytics
-                </h2>
-                <BarChart3 className="w-8 h-8 text-red-500 animate-pulse" style={{animationDelay: '0.5s'}} />
-              </div>
-              <p className={`text-xl max-w-2xl mx-auto leading-relaxed transition-colors duration-300 ${
+            <div className="text-center space-y-4 animate-fade-up">
+              <h2 className="text-4xl font-bold modern-gradient">
+                Farm Analytics
+              </h2>
+              <p className={`text-lg max-w-2xl mx-auto leading-relaxed ${
                 isDarkMode ? 'text-gray-300' : 'text-gray-600'
               }`}>
                 Gain insights into your farming patterns with detailed analytics and trends.
               </p>
             </div>
-            <div className="animate-slide-up">
+            <div className="animate-fade-up delay-100">
               <Analytics />
             </div>
           </div>
@@ -158,7 +175,7 @@ const App: React.FC = () => {
       
       case 'settings':
         return (
-          <div className="animate-fade-in">
+          <div className="animate-fade-up">
             <Settings />
           </div>
         );
@@ -170,7 +187,7 @@ const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen transition-all duration-500 ease-in-out ${
-      isDarkMode ? 'dark bg-gray-900' : ''
+      getViewBackground()
     }`}>
       <Navigation />
       <main className={`max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-12 transition-all duration-300 ${
@@ -180,17 +197,58 @@ const App: React.FC = () => {
       </main>
       <Toast />
       
-      {/* Decorative background elements */}
+      {/* Dynamic background elements based on view */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className={`absolute top-1/4 left-1/4 w-64 h-64 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow ${
-          isDarkMode ? 'bg-green-400' : 'bg-green-200'
-        }`}></div>
-        <div className={`absolute top-3/4 right-1/4 w-64 h-64 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow ${
-          isDarkMode ? 'bg-blue-400' : 'bg-blue-200'
-        }`} style={{animationDelay: '2s'}}></div>
-        <div className={`absolute bottom-1/4 left-1/3 w-64 h-64 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse-slow ${
-          isDarkMode ? 'bg-purple-400' : 'bg-purple-200'
-        }`} style={{animationDelay: '4s'}}></div>
+        {currentView === 'upload' && (
+          <>
+            <div className={`absolute top-1/4 left-1/4 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse ${
+              isDarkMode ? 'bg-emerald-500/20' : 'bg-emerald-300/40'
+            }`}></div>
+            <div className={`absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse delay-1000 ${
+              isDarkMode ? 'bg-green-500/20' : 'bg-green-300/40'
+            }`}></div>
+          </>
+        )}
+        {currentView === 'map' && (
+          <>
+            <div className={`absolute top-1/3 right-1/3 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse ${
+              isDarkMode ? 'bg-blue-500/20' : 'bg-blue-300/40'
+            }`}></div>
+            <div className={`absolute bottom-1/3 left-1/3 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse delay-1000 ${
+              isDarkMode ? 'bg-cyan-500/20' : 'bg-cyan-300/40'
+            }`}></div>
+          </>
+        )}
+        {currentView === 'list' && (
+          <>
+            <div className={`absolute top-1/4 right-1/4 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse ${
+              isDarkMode ? 'bg-rose-500/20' : 'bg-rose-300/40'
+            }`}></div>
+            <div className={`absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse delay-1000 ${
+              isDarkMode ? 'bg-pink-500/20' : 'bg-pink-300/40'
+            }`}></div>
+          </>
+        )}
+        {currentView === 'analytics' && (
+          <>
+            <div className={`absolute top-1/3 left-1/3 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse ${
+              isDarkMode ? 'bg-purple-500/20' : 'bg-purple-300/40'
+            }`}></div>
+            <div className={`absolute bottom-1/3 right-1/3 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse delay-1000 ${
+              isDarkMode ? 'bg-indigo-500/20' : 'bg-indigo-300/40'
+            }`}></div>
+          </>
+        )}
+        {currentView === 'settings' && (
+          <>
+            <div className={`absolute top-1/4 left-1/3 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse ${
+              isDarkMode ? 'bg-violet-500/20' : 'bg-violet-300/40'
+            }`}></div>
+            <div className={`absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse delay-1000 ${
+              isDarkMode ? 'bg-fuchsia-500/20' : 'bg-fuchsia-300/40'
+            }`}></div>
+          </>
+        )}
       </div>
     </div>
   );
