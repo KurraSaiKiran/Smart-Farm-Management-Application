@@ -173,7 +173,7 @@ const App: React.FC = () => {
       isDarkMode ? 'dark bg-gray-900' : ''
     }`}>
       <Navigation />
-      <main className={`max-w-7xl mx-auto px-6 py-12 transition-all duration-300 ${
+      <main className={`max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-12 transition-all duration-300 ${
         isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
       }`}>
         {renderContent()}

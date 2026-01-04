@@ -167,6 +167,32 @@
   background: linear-gradient(to bottom, #059669, #2563eb);
 }
 
+/* Mobile-specific improvements */
+@media (max-width: 1024px) {
+  .card {
+    @apply mx-2;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-sm;
+  }
+  
+  /* Ensure touch targets are large enough */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better spacing for mobile */
+  .space-y-8 > * + * {
+    margin-top: 1.5rem;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 1rem;
+  }
+}
+
 /* Smooth transitions for all interactive elements */
 * {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
