@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
-import { setSearchTerm, setSortBy, setSortOrder, removePlant } from '../../store/plantSlice';
+import { setSearchTerm, setSortBy, setSortOrder, removePlant, deleteAllPlants } from '../../store/plantSlice';
 import { addToast } from '../../store/uiSlice';
 import { Search, SortAsc, SortDesc, Trash2, Download, MapPin, Calendar, Eye, Filter } from 'lucide-react';
 import { format } from 'date-fns';
@@ -43,6 +43,16 @@ const PlantList: React.FC = () => {
       message: `📊 Exported ${filteredPlants.length} plants as ${format.toUpperCase()}`,
       type: 'success',
     }));
+  };
+
+  const handleDeleteAll = () => {
+    if (window.confirm(`Are you sure you want to delete all ${filteredPlants.length} plants? This action cannot be undone.`)) {
+      dispatch(deleteAllPlants());
+      dispatch(addToast({
+        message: '🗑️ All plants deleted successfully',
+        type: 'success',
+      }));
+    }
   };
 
   return (
@@ -166,6 +176,14 @@ const PlantList: React.FC = () => {
               >
                 <Download className="w-4 h-4" />
                 <span className="font-semibold">🔧 JSON</span>
+              </button>
+              <button
+                onClick={handleDeleteAll}
+                disabled={filteredPlants.length === 0}
+                className="feature-card flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 focus:ring-4 focus:ring-red-200 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="font-semibold">🗑️ Delete All</span>
               </button>
             </div>
           </div>

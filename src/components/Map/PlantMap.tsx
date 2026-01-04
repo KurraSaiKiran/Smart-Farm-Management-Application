@@ -17,22 +17,31 @@ const customIcon = new L.Icon({
 });
 
 const PlantMap: React.FC = () => {
-  const plants = useSelector((state: RootState) => state.plants.filteredPlants);
+  const plants = useSelector((state: RootState) => state.plants.plants);
   const { isDarkMode } = useSelector((state: RootState) => state.ui);
+
+  // Filter out plants with invalid coordinates
+  const validPlants = plants.filter(plant => 
+    plant.latitude && plant.longitude && 
+    !isNaN(plant.latitude) && !isNaN(plant.longitude) &&
+    plant.latitude !== 0 && plant.longitude !== 0
+  );
+
+  console.log('Total plants:', plants.length, 'Valid plants:', validPlants.length);
 
   // Default center (can be adjusted based on your region)
   const defaultCenter: [number, number] = [20.5937, 78.9629]; // India center
   const defaultZoom = 5;
 
-  // Calculate map center based on plants
-  const mapCenter: [number, number] = plants.length > 0 
+  // Calculate map center based on valid plants
+  const mapCenter: [number, number] = validPlants.length > 0 
     ? [
-        plants.reduce((sum, plant) => sum + plant.latitude, 0) / plants.length,
-        plants.reduce((sum, plant) => sum + plant.longitude, 0) / plants.length
+        validPlants.reduce((sum, plant) => sum + plant.latitude, 0) / validPlants.length,
+        validPlants.reduce((sum, plant) => sum + plant.longitude, 0) / validPlants.length
       ]
     : defaultCenter;
 
-  const mapZoom = plants.length > 0 ? 10 : defaultZoom;
+  const mapZoom = validPlants.length > 0 ? 10 : defaultZoom;
 
   return (
     <div className="relative w-full h-96 rounded-2xl overflow-hidden">
@@ -60,7 +69,7 @@ const PlantMap: React.FC = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {plants.map((plant) => (
+        {validPlants.map((plant) => (
           <Marker
             key={plant.id}
             position={[plant.latitude, plant.longitude]}

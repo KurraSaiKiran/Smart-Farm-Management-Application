@@ -45,6 +45,10 @@ const plantSlice = createSlice({
       state.plants = action.payload;
       state.filteredPlants = filterAndSortPlants(state.plants, state.searchTerm, state.sortBy, state.sortOrder);
     },
+    deleteAllPlants: (state) => {
+      state.plants = [];
+      state.filteredPlants = [];
+    },
   },
 });
 
@@ -70,5 +74,5 @@ function filterAndSortPlants(plants: Plant[], searchTerm: string, sortBy: 'date'
   });
 }
 
-export const { addPlant, removePlant, setSearchTerm, setSortBy, setSortOrder, loadPlantsFromStorage } = plantSlice.actions;
+export const { addPlant, removePlant, setSearchTerm, setSortBy, setSortOrder, loadPlantsFromStorage, deleteAllPlants } = plantSlice.actions;
 export default plantSlice.reducer;
