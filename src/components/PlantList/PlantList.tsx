@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { setSearchTerm, setSortBy, setSortOrder, removePlant, deleteAllPlants } from '../../store/plantSlice';
-import { addToast } from '../../store/uiSlice';
+import { addToast, setActiveView } from '../../store/uiSlice';
 import { Search, SortAsc, SortDesc, Trash2, Download, MapPin, Calendar, Eye, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import { exportToCSV, exportToJSON } from '../../utils/storage';
@@ -223,8 +223,23 @@ const PlantList: React.FC = () => {
                 <Search className="w-12 h-12 text-green-500" />
               </div>
             </div>
-            <h3 className="text-xl font-semibold mb-2">No plants found</h3>
-            <p>Upload some images to start building your plant collection! 🌱</p>
+            <h3 className="text-xl font-semibold mb-2">
+              {searchTerm ? 'No plants match your search' : 'Your farm is empty right now'}
+            </h3>
+            <p className="mb-6">
+              {searchTerm 
+                ? `Try adjusting your search term "${searchTerm}" or browse all plants.` 
+                : 'Upload your first plant image to start mapping your land and building your digital farm collection.'
+              }
+            </p>
+            {!searchTerm && (
+              <button 
+                onClick={() => dispatch(setActiveView('upload'))}
+                className="btn-primary"
+              >
+                🌱 Start Your Farm Journey
+              </button>
+            )}
           </div>
         ) : (
           <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'space-y-4'}>

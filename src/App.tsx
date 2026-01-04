@@ -11,11 +11,14 @@ import PlantList from './components/PlantList/PlantList';
 import Analytics from './components/Analytics/Analytics';
 import Settings from './components/Settings/Settings';
 import CursorFollower from './components/UI/CursorFollower';
+import { useDispatch } from 'react-redux';
+import { setActiveView } from './store/uiSlice';
 import { Sparkles, MapPin, Database, BarChart3, Settings as SettingsIcon } from 'lucide-react';
 
 const App: React.FC = () => {
   useLocalStorage(); // Initialize localStorage persistence
   
+  const dispatch = useDispatch();
   const { activeView, isDarkMode } = useSelector((state: RootState) => state.ui);
   const plantCount = useSelector((state: RootState) => state.plants.plants.length);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -128,9 +131,18 @@ const App: React.FC = () => {
             ) : (
               <div className={`card p-12 text-center animate-fade-up delay-100 ${isDarkMode ? 'bg-gray-800 text-white' : ''}`}>
                 <MapPin className={`w-16 h-16 mx-auto mb-4 animate-gentle-bounce ${isDarkMode ? 'text-gray-400' : 'text-gray-300'}`} />
-                <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>Your Farm Map Awaits</h3>
-                <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Upload some plant images to see them come alive on the map!</p>
-                <button className="btn-primary">Start Uploading</button>
+                <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
+                  Your farm map is waiting to come alive
+                </h3>
+                <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  Upload geo-tagged plant images to see them appear as markers on your interactive farm map. Each photo becomes a pin that tells your farm's story.
+                </p>
+                <button 
+                  onClick={() => dispatch(setActiveView('upload'))}
+                  className="btn-primary"
+                >
+                  📸 Upload First Plant Image
+                </button>
               </div>
             )}
           </div>
