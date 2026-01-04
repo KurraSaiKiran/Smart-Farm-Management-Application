@@ -16,23 +16,39 @@ export const usePlantUpload = () => {
   const uploadPlant = useCallback(async (file: File) => {
     const uploadId = generateId();
     
-    // Initialize upload progress
+    // Initialize upload progress with storytelling
     dispatch(addUpload({
       id: uploadId,
       progress: 0,
       status: 'uploading',
+      message: 'Plant photo received 🌱'
+    }));
+
+    dispatch(addToast({
+      message: `📸 Plant photo received! Processing ${file.name}...`,
+      type: 'info',
     }));
 
     try {
       // Phase 1: Upload to Cloudinary
       const cloudinaryResponse = await uploadToCloudinary(file, (progress) => {
-        dispatch(updateUpload({ id: uploadId, progress }));
+        dispatch(updateUpload({ 
+          id: uploadId, 
+          progress,
+          message: progress < 50 ? 'Preparing your plant photo...' : 'Almost ready to find its home...'
+        }));
       });
 
       dispatch(updateUpload({ 
         id: uploadId, 
         status: 'extracting',
-        progress: 100 
+        progress: 100,
+        message: 'Finding where this plant lives... 🗺️'
+      }));
+
+      dispatch(addToast({
+        message: '🔍 Finding where this plant lives on your farm...',
+        type: 'info',
       }));
 
       // Phase 2: Extract location data
@@ -43,12 +59,13 @@ export const usePlantUpload = () => {
       );
 
       if (!locationResponse.success) {
-        throw new Error('Failed to extract location data');
+        throw new Error('Could not find this plant\'s location');
       }
 
       dispatch(updateUpload({ 
         id: uploadId, 
-        status: 'saving' 
+        status: 'saving',
+        message: 'Adding plant to your farm map... 🌾'
       }));
 
       // Phase 3: Save plant data
@@ -75,11 +92,12 @@ export const usePlantUpload = () => {
       dispatch(addPlant(plant));
       dispatch(updateUpload({ 
         id: uploadId, 
-        status: 'completed' 
+        status: 'completed',
+        message: 'Plant added to your farm! 🎉'
       }));
 
       dispatch(addToast({
-        message: `Successfully uploaded ${plant.imageName}`,
+        message: `🌱 ${plant.imageName} has found its place on your farm map!`,
         type: 'success',
       }));
 
@@ -92,11 +110,12 @@ export const usePlantUpload = () => {
       dispatch(updateUpload({ 
         id: uploadId, 
         status: 'error',
-        error: error instanceof Error ? error.message : 'Upload failed'
+        error: error instanceof Error ? error.message : 'Something went wrong',
+        message: 'Oops! This plant got lost... 😔'
       }));
 
       dispatch(addToast({
-        message: `Failed to upload ${file.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        message: `😔 ${file.name} couldn't find its way to your farm. Please try again.`,
         type: 'error',
       }));
     }

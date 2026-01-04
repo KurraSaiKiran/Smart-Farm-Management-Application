@@ -15,10 +15,10 @@ const PlantList: React.FC = () => {
   const [selectedPlant, setSelectedPlant] = useState<string | null>(null);
 
   const handleDelete = (plantId: string, plantName: string) => {
-    if (window.confirm(`Are you sure you want to delete ${plantName}?`)) {
+    if (window.confirm(`Are you sure you want to remove ${plantName} from your farm?`)) {
       dispatch(removePlant(plantId));
       dispatch(addToast({
-        message: `🗑️ Deleted ${plantName}`,
+        message: `🍃 ${plantName} has been removed from your farm collection`,
         type: 'success',
       }));
     }
@@ -46,10 +46,10 @@ const PlantList: React.FC = () => {
   };
 
   const handleDeleteAll = () => {
-    if (window.confirm(`Are you sure you want to delete all ${filteredPlants.length} plants? This action cannot be undone.`)) {
+    if (window.confirm(`Are you sure you want to say goodbye to all ${filteredPlants.length} plants? This action cannot be undone.`)) {
       dispatch(deleteAllPlants());
       dispatch(addToast({
-        message: '🗑️ All plants deleted successfully',
+        message: '🍂 All plants have been cleared from your farm. Time for a fresh start!',
         type: 'success',
       }));
     }

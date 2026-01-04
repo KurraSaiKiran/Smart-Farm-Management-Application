@@ -12,6 +12,7 @@ export interface UploadProgress {
   progress: number;
   status: 'uploading' | 'extracting' | 'saving' | 'completed' | 'error';
   error?: string;
+  message?: string;
 }
 
 export interface CloudinaryResponse {
