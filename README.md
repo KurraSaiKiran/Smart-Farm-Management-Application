@@ -12,6 +12,17 @@ A production-ready React application that allows farmers to upload geo-tagged pl
 - **🌐 Live Demo**: [https://smart-farm-management-application.vercel.app/](https://smart-farm-management-application.vercel.app/)
 - **📚 API Documentation**: [https://github.com/KurraSaiKiran/Smart-Farm-Management-Application/blob/main/API_DOCUMENTATION.md](https://github.com/KurraSaiKiran/Smart-Farm-Management-Application/blob/main/API_DOCUMENTATION.md)
 
+---
+### 🧠 Design Philosophy
+
+I focused on making **system behavior observable to the user**, especially in cases of **uncertainty or partial failure**, rather than hiding complexity behind generic loading states.
+
+This approach helps users:
+- Understand what is happening at each stage of the workflow
+- Identify issues early during uploads or location extraction
+- Build trust in the system even when data is incomplete or approximate
+
+
 ## 🌟 Features
 
 ### Core Functionality
